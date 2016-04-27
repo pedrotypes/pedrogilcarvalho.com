@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogging on Words &amp; Symbols</title>
+    <link>http://pgscandeias.github.io/blog/categories/blogging/</link>
+    <description>Recent content in Blogging on Words &amp; Symbols</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 27 Apr 2016 11:53:56 +0200</lastBuildDate>
+    <atom:link href="http://pgscandeias.github.io/blog/categories/blogging/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Hugo</title>
+      <link>http://pgscandeias.github.io/blog/2016/04/hugo</link>
+      <pubDate>Wed, 27 Apr 2016 11:53:56 +0200</pubDate>
+      
+      <guid>http://pgscandeias.github.io/blog/2016/04/hugo</guid>
+      <description>&lt;p&gt;I&amp;rsquo;m torn on the topic of static website generators.&lt;/p&gt;
+
+&lt;p&gt;On the one hand, they add a ton of cognitive load. No matter how simple their CLI commands, it&amp;rsquo;s yet another thing to learn for the purpose of automating what amounts to simple html creation.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, simple html creation is boring as hell. Which is why many of us learned php and python and what have you so we could have templates and render them on demand and have everything change at once.&lt;/p&gt;
+
+&lt;p&gt;So I&amp;rsquo;m giving this &lt;a href=&#34;https://gohugo.io/overview/quickstart/&#34;&gt;hugo&lt;/a&gt; thing a go. It&amp;rsquo;s got clear documentation with useful examples. There are many nice themes. And it&amp;rsquo;s written in go, which is &lt;del&gt;the fashion of our times&lt;/del&gt; very fast indeed.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

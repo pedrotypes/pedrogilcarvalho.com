@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Words &amp; Symbols</title>
+    <link>http://pgscandeias.github.io/blog/</link>
+    <description>Recent content on Words &amp; Symbols</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 27 Apr 2016 15:09:13 +0200</lastBuildDate>
+    <atom:link href="http://pgscandeias.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Simplify</title>
+      <link>http://pgscandeias.github.io/blog/2016/04/simplify</link>
+      <pubDate>Wed, 27 Apr 2016 15:09:13 +0200</pubDate>
+      
+      <guid>http://pgscandeias.github.io/blog/2016/04/simplify</guid>
+      <description>
+
+&lt;p&gt;Let&amp;rsquo;s take a look at how easy it is to start out with the best of intentions and then quickly lose control.&lt;/p&gt;
+
+&lt;p&gt;By adhering more closely to &lt;a href=&#34;https://en.wikipedia.org/wiki/Single_responsibility_principle&#34;&gt;Single Responsibility&lt;/a&gt; and enlisting the help of &lt;a href=&#34;https://en.wikipedia.org/wiki/Open/closed_principle&#34;&gt;Open/Closed&lt;/a&gt;, we then solve the mess.&lt;/p&gt;
+
+&lt;h2 id=&#34;it-starts-out-innocently-enough:5b5e2161e3217663444640cdc0b44561&#34;&gt;It starts out innocently enough&lt;/h2&gt;
+
+&lt;p&gt;So I have this &lt;code&gt;CtaService&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;It needs to provide calls to action to a user, based on events that happened to said user. We know there are many different kinds of events, which leads to different kinds of Ctas, so we delegate Cta creation to a set of factories.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;interface EventStore
+{
+    public function getByUser(User $user);
+}
+
+interface CtaFactory
+{
+    public function canHandle(Event $event);
+    public function getCta(Event $event);
+}
+
+class CtaService
+{
+    protected $events;
+    protected $factories = [];
+
+    public function __construct(EventStore $events, array $factories)
+    {
+        $this-&amp;gt;events = $events;
+        $this-&amp;gt;factories = $factories;
+    }
+
+    public function getCtas(User $user)
+    {
+        $ctas = [];
+        foreach ($this-&amp;gt;events-&amp;gt;getByUser($user) as $event) {
+            foreach ($this-&amp;gt;factories as $factory) { // ugh
+                if ($factory-&amp;gt;canHandle($event)) {
+                    $ctas[] = $factory-&amp;gt;getCta($event);
+                }
+            }
+        }
+
+        return $ctas;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Everyting is nice and clean, if a little naive, and life is good.&lt;/p&gt;
+
+&lt;h2 id=&#34;but-then-it-gets-weird:5b5e2161e3217663444640cdc0b44561&#34;&gt;But then it gets weird&lt;/h2&gt;
+
+&lt;p&gt;A project manager rolls in and he&amp;rsquo;s like&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Most users are expected to get a list of &lt;code&gt;Cta&lt;/code&gt;s no matter their events.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Fine. Let&amp;rsquo;s call them base ctas and always retrieve them before the other ones.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;class CtaService
+{
+    public function getCtas(User $user)
+    {
+        $ctas = $this-&amp;gt;getBaseCtas(User $user);
+        ...
+    }
+
+    protected function getBaseCtas(User $user)
+    {
+        ...
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nailed it!&lt;/p&gt;
+
+&lt;p&gt;Now, where do these base ctas come from? Let&amp;rsquo;s say they depend on some &lt;code&gt;StatusService&lt;/code&gt; which we now need to inject.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;class CtaService
+{
+    public function __construct(
+        EventStore $events, 
+        array $factories,
+        StatusService $status
+    ) {
+        $this-&amp;gt;events = $events;
+        $this-&amp;gt;factories = $factories;
+        $this-&amp;gt;status = $status;
+    } {}
+
+    # ...
+    
+    protected function getBaseCtas(User $user)
+    {
+        $ctas = [];
+        if ($this-&amp;gt;status-&amp;gt;isVIP()) {
+            $ctas[] = new VIPStatusCta();
+        }
+
+        return $cta;
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Sorted! But, you know, now the air is a little funky.&lt;/p&gt;
+
+&lt;h2 id=&#34;and-it-gets-weirder:5b5e2161e3217663444640cdc0b44561&#34;&gt;And it gets weirder&lt;/h2&gt;
+
+&lt;p&gt;Ok, so now it&amp;rsquo;s 2 weeks later and I&amp;rsquo;m told we need to give the customer a call to action to buy the most expensive product they can afford:&lt;/p&gt;
+
+&lt;p&gt;Um, I guess maybe&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;class CtaService
+{
+    public function __construct(
+        EventStore $events, 
+        array $factories,
+        StatusService $status,
+        ProductStore $products
+    ) {
+        # ...
+        $this-&amp;gt;products = $products;
+    } {}
+
+    # ...
+    
+    protected function getBaseCtas(User $user)
+    {
+        $ctas = [];
+
+        $product = $this
+            -&amp;gt;products
+            -&amp;gt;getMostExpensiveBelow($user-&amp;gt;getBalance())
+        ;
+        if ($product) {
+            $ctas[] = new ProductCta($product);
+        }
+
+        if ($this-&amp;gt;status-&amp;gt;isVIP()) {
+            $ctas[] = new VIPStatusCta();
+        }
+
+        return $cta;
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And this is how my face will end up pasted on a dartboard by whoever needs to maintain this next year.&lt;/p&gt;
+
+&lt;h2 id=&#34;thinking-cap-on:5b5e2161e3217663444640cdc0b44561&#34;&gt;Thinking cap on&lt;/h2&gt;
+
+&lt;p&gt;So what&amp;rsquo;s going on here? How did this simple class get so out of hand so quickly?&lt;/p&gt;
+
+&lt;h3 id=&#34;error-1-we-failed-to-design-anything:5b5e2161e3217663444640cdc0b44561&#34;&gt;Error #1 - we failed to design anything&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s be honest, we never designed our &lt;code&gt;CtaService&lt;/code&gt;, it just sort of happened. We needed to get Ctas as quickly as possible, so we coded something up that gave us Ctas.&lt;/p&gt;
+
+&lt;h3 id=&#34;error-2-we-asked-too-much-from-a-single-class:5b5e2161e3217663444640cdc0b44561&#34;&gt;Error #2 - we asked too much from a single class&lt;/h3&gt;
+
+&lt;p&gt;It was clear from the beginning that this service was always have to delegate actual &lt;code&gt;Cta&lt;/code&gt; creation to some collaborators. We started out well, but then keept it simple the wrong way: solving each new requirement with its own ad-hoc piece of code. This set a very bad example. All future development here is going to follow the same pattern and this class will only get worse and worse.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-solution:5b5e2161e3217663444640cdc0b44561&#34;&gt;A solution&lt;/h2&gt;
+
+&lt;p&gt;Keeping a clear head is very important in software development. This could easily have been avoided by following the SOLID principles. Keeping responsibilities singular, ensuring classes are closed for modification but open to extension, and focusing on how objects communicate rather than how they transform data until we really have to.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Q&lt;/strong&gt;: So, what should &lt;code&gt;CtaService&lt;/code&gt; actually do?&lt;br /&gt;
+&lt;strong&gt;A&lt;/strong&gt;: Delegate, delegate, delegate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;interface BaseCtaFactory
+{
+    public function getCta(User $user);
+}
+
+class ProductCtaFactory implements BaseCtaFactory
+{
+    public function __construct(ProductStore $products) {}
+    public function getCta(User $user)
+    {
+        $product = $this
+            -&amp;gt;products
+            -&amp;gt;getMostExpensiveBelow($user-&amp;gt;getBalance())
+        ;
+        if ($product) {
+            return new ProductCta($product);
+        }
+    }
+}
+
+interface EventCtaFactory
+{
+    public function canHandle(Event $event);
+    public function getCta(Event $event);
+}
+
+class CtaService
+{
+    public function __construct(
+        EventStore $events,
+        array $baseFactories,   // BaseCtaFactory[]
+        array $eventFactories,  // EventCtaFactory[]
+    ) {}
+
+    public function getAllCtas(User $user)
+    {
+        return array_merge(
+            $this-&amp;gt;getBaseCtas($user),
+            $this-&amp;gt;getEventCtas($user)
+        );
+    }
+
+    public function getBaseCtas(User $user)
+    {
+        # Iterate $this-&amp;gt;baseFactories, 
+        # passing the user to each.
+    }
+
+    public function getEventCtas(User $user)
+    {
+        # Get events for the user, 
+        # then iterate $this-&amp;gt;baseFactories
+        # and pass every event to every one 
+        # (naive implementation).
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This service doesn&amp;rsquo;t actually do anything of consequence anymore. It doesn&amp;rsquo;t create or modify Ctas. It&amp;rsquo;s pushing that responsibility down the line, which on the surface appears like just more complexity.&lt;/p&gt;
+
+&lt;p&gt;Thing is, though, now we&amp;rsquo;re free to inject as many or as few &lt;code&gt;BaseCtaFactory&lt;/code&gt; and &lt;code&gt;EventCtaFactory&lt;/code&gt; instances as we need, meaning this class will probably never need to be changed again. Also, each factory is free to work in whatever way is needed. Each can be unit tested individually.&lt;/p&gt;
+
+&lt;p&gt;This code is, in essence, infinitely flexible and expansible. And did it cost us that much development time? Did it really? I don&amp;rsquo;t think so.&lt;/p&gt;
+
+&lt;p&gt;Software development gets very complicated very quickly not necessarily because we&amp;rsquo;re dealing with hard problems (99% of all code is CRUD anyway, at least in web applications), but because we fail to put in the tiny little extra effort of making things maintainable from the start. Then we end up with huge balls of mud no one likes working with.&lt;/p&gt;
+
+&lt;p&gt;Following the &lt;a href=&#34;https://en.wikipedia.org/wiki/SOLID_(object-oriented_design)&#34;&gt;SOLID&lt;/a&gt; principles really, &lt;em&gt;really&lt;/em&gt; helps.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Hugo</title>
+      <link>http://pgscandeias.github.io/blog/2016/04/hugo</link>
+      <pubDate>Wed, 27 Apr 2016 11:53:56 +0200</pubDate>
+      
+      <guid>http://pgscandeias.github.io/blog/2016/04/hugo</guid>
+      <description>&lt;p&gt;I&amp;rsquo;m torn on the topic of static website generators.&lt;/p&gt;
+
+&lt;p&gt;On the one hand, they add a ton of cognitive load. No matter how simple their CLI commands, it&amp;rsquo;s yet another thing to learn for the purpose of automating what amounts to simple html creation.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, simple html creation is boring as hell. Which is why many of us learned php and python and what have you so we could have templates and render them on demand and have everything change at once.&lt;/p&gt;
+
+&lt;p&gt;So I&amp;rsquo;m giving this &lt;a href=&#34;https://gohugo.io/overview/quickstart/&#34;&gt;hugo&lt;/a&gt; thing a go. It&amp;rsquo;s got clear documentation with useful examples. There are many nice themes. And it&amp;rsquo;s written in go, which is &lt;del&gt;the fashion of our times&lt;/del&gt; very fast indeed.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
