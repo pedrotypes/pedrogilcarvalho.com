@@ -19,6 +19,11 @@
         margin-right: auto;
         margin-top: 1rem;
       }
+      @media only screen and (max-width: 768px) {
+        .container {
+          width: 100%;
+        }
+      }
       .container td {
         padding: 0 1rem;
       }
@@ -29,7 +34,9 @@
         width: 67%;
       }
       .photo {
-        max-width: 100%;
+        max-width: 50%;
+        float: left;
+        margin: 0 2rem 1rem 0;
       }
 
       .content section {
@@ -45,12 +52,13 @@
   <body>
     <table class="container">
       <tr valign="top">
-        <td class="picture"><img class="photo" src="./img/pedro.jpg" alt="Pedro Gil Carvalho"></td>
         <td class="content">
           <h1>
             Hi, I'm Pedro.
           </h1>
           <section>
+            <img class="photo" src="./img/pedro.jpg" alt="Pedro Gil Carvalho">
+
             <p>
               I've been a professional programmer for over 20 years.
             </p>
