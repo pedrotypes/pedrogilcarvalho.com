@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedro Gil Carvalho</title>
+    <style>
+      body {
+        font-family: "PT Serif", serif;
+        font-size: 18pt;
+        line-height: 26pt;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        margin-top: 0;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .profilepic {
+        max-width: 128px;
+        float: right;
+        margin: 0 1rem;
+      }
+      .content section {
+        margin-bottom: 2.5rem;
+      }
+      .content .clear {
+        clear: both;
+      }
+      .content h2 {
+        font-size: 1.25rem;
+        color: #777;
+        font-style: italic;
+      }
+      .liner {
+        border: 1px solid #aaa;
+        height: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        {{ content | safe }}
+      </div>
+    </div>
+  </body>
+</html>
