@@ -18,11 +18,17 @@ I'm a science nerd. I love lego, star wars, driving, and going for a run now and
 
 
 ## recent experience
-I'm building out [Lengoo](https://lengoo.com)'s engineering organization in Berlin. I mentor a diverse team of engineers and managers, hire, and provide technical guidance across our products.
 
-Previously, I helped [Contentful](https://contentful.com)'s enterprise customers deliver content-centric software at scale across Europe and North America. I provided their teams with technical guidance and cross-functional organizational coaching.
+Today I'm an engineering director at [Getir](https://getir.com). I support a group of managers whose distributed teams provide backend and customer-facing services that touch all of the verticals of Getir's global [super app](https://en.wikipedia.org/wiki/Super-app).
 
-Before then, I led the Platform Engineering department at [Hellofresh](https://hellofresh.com) HQ in Berlin, where we handled worldwide cloud infrastructure, payments, and public APIs. We grew the engineering organization from 10 to over 100 headcount in my time, laying the foundations of [HelloTech](https://engineering.hellofresh.com/).
+I was head of engineering at [Lengoo](https://lengoo.com) before. We delivered translation AI services to businesses and individuals all across. My tenure straddled the pandemic, tackling the unique challenges of the times while growing a diverse engineering organization.
+
+Previously, I helped [Contentful](https://contentful.com)'s enterprise customers deliver content-centric software at scale across Europe and North America. Serving as an enterprise solution architect, I provided their teams with technical guidance and cross-functional organizational coaching. All while managing Contentful's European SA team and founding the North American one.
+
+Before then, I led the Platform Engineering department at [Hellofresh](https://hellofresh.com) HQ in Berlin, where we handled worldwide cloud infrastructure, payments, and public APIs. As one of four heads of engineering, we grew the organization from 10 to over 100 headcount and laid down the foundations of [HelloTech](https://engineering.hellofresh.com/).
+
+And before that, I had about 15 years of experience building software. Sometimes alone as a freelancer or founder, mostly as part of teams. The drive to write code never left me. Even today I still identify as a programmer first and manager second. I see management as a way to bridge the gap that exists between senior leadership and individual contributors, creating the conditions for individuals as well as the broader organization to succeed.
+
 
 ## writing
 
