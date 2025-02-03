@@ -29,7 +29,6 @@ Raw content sources live in markdown files under the [`./content`](./content) di
 
 Layouts go in [`./content/_includes`](./content/_includes) and are written in [nunjucks](https://mozilla.github.io/nunjucks/).
 
-
 ### Building
 
 To build the site, navigate to the root directory and use eleventy:
@@ -40,7 +39,6 @@ npx @11ty/eleventy --input=./content
 
 Output will go in the [`./_site`](./site) directory.
 
-
 You can preview locally with the `--serve` option:
 
 ```
@@ -49,7 +47,10 @@ npx @11ty/eleventy --input=./content --serve
 
 As long as a layout with a `<body>` tag is used, there's live preview.
 
-
 ### Hosting
+
 I'm hosting this on [netlify](https://netlify.com).
 
+### Click tacking
+
+I'm using [cutt.ly](https://cutt.ly/) to track last 30 days of clicks on my links.
